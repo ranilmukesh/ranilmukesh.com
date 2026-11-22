@@ -1,0 +1,71 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Icon from '../../components/Icon.astro';
+import { profile, paperHref, appliedResearch } from '../../data/site';
+import { formatDate } from '../../utils/format';
+
+const entries = (await getCollection('research')).sort(
+  (a, b) => (b.data.date?.valueOf() ?? 0) - (a.data.date?.valueOf() ?? 0),
+);
+const papers = await Promise.all(entries.map(async (entry) => ({ entry, Content: (await render(entry)).Content })));
+const title = `Research | ${profile.name}`;
+const description = 'Research papers, pre-prints, and architecture reports by Ranil Mukesh MJ: agent security, federated learning, multimodal foundation models, clinical AI, and edge vision.';
+---
+
+<BaseLayout title={title} description={description}>
+  <section class="page-hero shell" aria-labelledby="page-title">
+    <span class="section-kicker">Research portfolio</span>
+    <h1 id="page-title">Publications<br /><em>&amp; pre-prints.</em></h1>
+    <p>Academic papers, architecture reports, and technical research.</p>
+  </section>
+
+  <section class="shell listing" aria-label="Papers">
+    <ol class="paper-cards">
+      {papers.map(({ entry, Content }) => (
+        <li class="paper-card" id={`paper-${entry.id}`} data-reveal>
+          <div class="paper-card-meta">
+            {entry.data.venue && <span class="venue-badge">{entry.data.venue}</span>}
+            {entry.data.date && <span>{formatDate(entry.data.date, 'month')}</span>}
+            {!entry.data.venue && !entry.data.date && <span class="venue-badge is-preprint">Pre-print</span>}
+          </div>
+          <h2>
+            <a href={paperHref(entry.data.pdfUrl)} target="_blank" rel="noopener noreferrer">{entry.data.title}</a>
+          </h2>
+          {entry.data.abstract && <p class="paper-abstract">{entry.data.abstract}</p>}
+          <details class="paper-more">
+            <summary>In plain terms</summary>
+            <div class="paper-body"><Content /></div>
+          </details>
+          <div class="paper-card-foot">
+            {entry.data.tags && entry.data.tags.length > 0 && (
+              <div class="tool-cloud">{entry.data.tags.map((tag) => <span>{tag}</span>)}</div>
+            )}
+            <div class="paper-actions">
+              <a class="text-link" href={paperHref(entry.data.pdfUrl)} target="_blank" rel="noopener noreferrer"><Icon name="file" size={15} /> PDF</a>
+              {entry.data.githubUrl && (
+                <a class="text-link" href={entry.data.githubUrl} target="_blank" rel="noopener noreferrer"><Icon name="github" size={15} /> Code</a>
+              )}
+            </div>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <section class="shell listing applied-research" aria-labelledby="applied-title">
+    <div class="builds-head" data-reveal>
+      <h2 id="applied-title">Earlier <em>applied research</em></h2>
+      <p>Systems built and deployed on edge hardware before the current papers.</p>
+    </div>
+    <div class="build-grid">
+      {appliedResearch.map((item) => (
+        <div class="build-card" data-reveal>
+          <span class="build-name">{item.title}</span>
+          <p>{item.description}</p>
+          <span class="build-tags">{item.tags.join(' · ')}</span>
+        </div>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

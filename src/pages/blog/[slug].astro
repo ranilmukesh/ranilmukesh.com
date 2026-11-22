@@ -1,0 +1,71 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import 'katex/dist/katex.min.css';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Icon from '../../components/Icon.astro';
+import { profile } from '../../data/site';
+import { formatDate } from '../../utils/format';
+
+export async function getStaticPaths() {
+  const posts = (await getCollection('blog')).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+  return posts.map((post, index) => ({
+    params: { slug: post.id },
+    props: { post, newer: posts[index - 1], older: posts[index + 1] },
+  }));
+}
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+  newer?: CollectionEntry<'blog'>;
+  older?: CollectionEntry<'blog'>;
+}
+
+const { post, newer, older } = Astro.props;
+const { Content } = await render(post);
+const words = (post.body ?? '').split(/\s+/).filter(Boolean).length;
+const minutes = Math.max(1, Math.round(words / 220));
+const canonical = new URL(`/blog/${post.id}/`, Astro.site).toString();
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: post.data.title,
+  description: post.data.description,
+  datePublished: post.data.pubDate.toISOString(),
+  ...(post.data.updatedDate ? { dateModified: post.data.updatedDate.toISOString() } : {}),
+  url: canonical,
+  mainEntityOfPage: canonical,
+  author: { '@id': new URL('/#person', Astro.site).toString(), name: profile.name },
+};
+---
+
+<BaseLayout title={`${post.data.title} | ${profile.name}`} description={post.data.description} type="article" schema={articleSchema}>
+  <article class="post shell">
+    <header class="post-header">
+      <a class="back-link" href="/blog/"><Icon name="arrow-left" size={16} /> All articles</a>
+      <div class="post-meta">
+        <time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time>
+        <span>{minutes} min read</span>
+      </div>
+      <h1>{post.data.title}</h1>
+      <p class="post-description">{post.data.description}</p>
+    </header>
+
+    <div class="prose">
+      <Content />
+    </div>
+
+    <nav class="post-nav" aria-label="More articles">
+      {newer ? (
+        <a href={`/blog/${newer.id}/`}><small>Newer</small><span>{newer.data.title}</span></a>
+      ) : <span></span>}
+      {older ? (
+        <a class="older" href={`/blog/${older.id}/`}><small>Older</small><span>{older.data.title}</span></a>
+      ) : <span></span>}
+    </nav>
+  </article>
+
+  <script>
+    import { renderMermaid } from '../../scripts/mermaid';
+    renderMermaid();
+  </script>
+</BaseLayout>

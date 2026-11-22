@@ -1,0 +1,41 @@
+{
+  "name": "ranilmukesh-site",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Personal site of Ranil Mukesh MJ (ranilmukesh.com), built on the MIT-licensed LatentFolio Astro template.",
+  "author": {
+    "name": "Ranil Mukesh MJ",
+    "url": "https://ranilmukesh.com"
+  },
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=22.23.4"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "test": "node --test",
+    "audit": "npm audit --audit-level=low"
+  },
+  "dependencies": {
+    "@astrojs/markdown-remark": "^7.3.10",
+    "@astrojs/sitemap": "3.7.3",
+    "@fontsource-variable/instrument-sans": "^5.3.0",
+    "@fontsource-variable/newsreader": "^5.3.0",
+    "astro": "7.4.11",
+    "katex": "^0.19.1",
+    "mermaid": "^11.17.2",
+    "rehype-katex": "^7.0.1",
+    "remark-math": "^6.0.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.10",
+    "typescript": "5.9.2"
+  },
+  "overrides": {
+    "katex": "^0.19.1"
+  }
+}

@@ -1,0 +1,24 @@
+---
+import { expertise, foundations } from '../data/site';
+---
+
+<div class="expertise-grid">
+  {expertise.map((item) => (
+    <article class={`expertise-card tone-${item.accent}`} data-reveal>
+      <div class="expertise-top">
+        <span class="expertise-number">{item.number}</span>
+        <div class="expertise-icon" aria-hidden="true"><i></i><i></i><i></i></div>
+      </div>
+      <h3>{item.title}</h3>
+      <p>{item.description}</p>
+      <ul class="capability-list">
+        {item.capabilities.map((capability) => <li>{capability}</li>)}
+      </ul>
+      <div class="tool-cloud" aria-label={`Tools for ${item.title}`}>{item.tools.map((tool) => <span>{tool}</span>)}</div>
+    </article>
+  ))}
+</div>
+<p class="foundations" data-reveal>
+  <span class="section-kicker">Foundations</span>
+  {foundations.map((item) => <span class="foundation-item">{item}</span>)}
+</p>

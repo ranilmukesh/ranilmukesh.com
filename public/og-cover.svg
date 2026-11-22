@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#f3eee4"/>
+  <circle cx="1040" cy="120" r="260" fill="#6b3a5f" opacity="0.08"/>
+  <circle cx="1090" cy="520" r="150" fill="#b86e51" opacity="0.10"/>
+  <rect x="72" y="72" width="54" height="54" rx="20" fill="#1f1a1d" transform="rotate(-4 99 99)"/>
+  <text x="99" y="110" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-style="italic" font-weight="600" font-size="32" fill="#f6f1e7">R</text>
+  <text x="146" y="96" font-family="Georgia, 'Times New Roman', serif" font-weight="600" font-size="28" fill="#1b1719">Ranil Mukesh MJ</text>
+  <text x="146" y="122" font-family="'Segoe UI', Arial, sans-serif" font-weight="700" font-size="15" letter-spacing="2" fill="#675f5a">CO-FOUNDER &amp; CTO · PHOBOSQ &amp; K22.AI</text>
+  <text x="72" y="300" font-family="'Segoe UI', Arial, sans-serif" font-weight="700" font-size="84" letter-spacing="-3" fill="#1b1719">Infrastructure for</text>
+  <text x="72" y="392" font-family="Georgia, 'Times New Roman', serif" font-style="italic" font-size="88" letter-spacing="-2" fill="#1b1719">autonomous</text>
+  <text x="72" y="484" font-family="Georgia, 'Times New Roman', serif" font-style="italic" font-size="88" letter-spacing="-2" fill="#6b3a5f">enterprise intelligence.</text>
+  <rect x="72" y="540" width="1056" height="1" fill="#1b1719" opacity="0.18"/>
+  <text x="72" y="578" font-family="'Segoe UI', Arial, sans-serif" font-weight="600" font-size="20" fill="#675f5a">Deterministic, stateful agentic systems · ranilmukesh.com</text>
+</svg>

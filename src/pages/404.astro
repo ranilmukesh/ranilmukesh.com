@@ -1,0 +1,18 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import { profile } from '../data/site';
+---
+
+<BaseLayout title={`Page not found | ${profile.name}`} description="This page does not exist." noindex>
+  <section class="not-found shell">
+    <div class="not-found-code" aria-hidden="true"><span>4</span><i></i><span>4</span></div>
+    <span class="section-kicker">No matching route</span>
+    <h1>This page fell out<br />of the <em>context window.</em></h1>
+    <p>The rest of the site is still grounded.</p>
+    <div class="not-found-actions">
+      <a class="button button-primary" href="/">Return home <Icon name="arrow-right" size={17} /></a>
+      <a class="button button-ghost" href="/blog/">Read the articles <Icon name="arrow-right" size={17} /></a>
+    </div>
+  </section>
+</BaseLayout>

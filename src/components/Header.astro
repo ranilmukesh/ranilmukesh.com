@@ -1,0 +1,97 @@
+---
+import Icon from './Icon.astro';
+import { profile } from '../data/site';
+
+const pathname = Astro.url.pathname;
+const isHome = pathname === '/';
+const nav = [
+  { label: 'Work', href: isHome ? '#work' : '/#work' },
+  { label: 'Expertise', href: isHome ? '#expertise' : '/#expertise' },
+  { label: 'Journey', href: isHome ? '#journey' : '/#journey' },
+  { label: 'Articles', href: '/blog/', active: pathname.startsWith('/blog') },
+  { label: 'Research', href: '/research/', active: pathname.startsWith('/research') },
+];
+---
+
+<header class="site-header" data-header>
+  <div class="header-inner shell">
+    <a class="brand" href="/" aria-label={`${profile.name}, home`}>
+      <span class="brand-mark" aria-hidden="true">R</span>
+      <span class="brand-copy">
+        <strong>{profile.shortName}</strong>
+        <small>{profile.role} · {profile.companies}</small>
+      </span>
+    </a>
+
+    <nav class="desktop-nav" aria-label="Primary navigation">
+      {nav.map((item) => <a href={item.href} aria-current={item.active ? 'page' : undefined}>{item.label}</a>)}
+    </nav>
+
+    <div class="header-actions">
+      <button class="theme-toggle palette-toggle" type="button" aria-label="Change colour theme" title="Change colour theme" data-palette-cycle>
+        <span class="palette-swatch" aria-hidden="true"><i></i><i></i><i></i></span>
+      </button>
+      <button class="theme-toggle" type="button" aria-label="Switch to dark mode" aria-pressed="false" title="Switch to dark mode" data-mode-toggle>
+        <span class="theme-icon theme-icon-sun"><Icon name="sun" size={17} /></span>
+        <span class="theme-icon theme-icon-moon"><Icon name="moon" size={17} /></span>
+      </button>
+      <a class="header-cta" href={`mailto:${profile.email}`}>
+        Get in touch
+        <Icon name="arrow-up-right" size={16} />
+      </a>
+    </div>
+
+    <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="mobile-nav" data-nav-toggle>
+      <span class="nav-open"><Icon name="menu" /></span>
+      <span class="nav-close"><Icon name="close" /></span>
+    </button>
+  </div>
+
+  <nav class="mobile-nav" id="mobile-nav" aria-label="Mobile navigation" data-mobile-nav inert>
+    <div class="shell">
+      {nav.map((item, index) => <a href={item.href}><span>0{index + 1}</span>{item.label}</a>)}
+      <a class="mobile-contact" href={`mailto:${profile.email}`}>Get in touch <Icon name="arrow-up-right" /></a>
+    </div>
+  </nav>
+</header>
+
+<script>
+  const setupHeader = () => {
+    const header = document.querySelector<HTMLElement>('[data-header]');
+    const toggle = document.querySelector<HTMLButtonElement>('[data-nav-toggle]');
+    const mobileNav = document.querySelector<HTMLElement>('[data-mobile-nav]');
+    if (!header || !toggle || !mobileNav || toggle.dataset.ready) return;
+    toggle.dataset.ready = 'true';
+
+    const close = () => {
+      header.classList.remove('menu-open');
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.setAttribute('aria-label', 'Open navigation');
+      mobileNav.inert = true;
+      document.body.classList.remove('nav-locked');
+    };
+
+    toggle.addEventListener('click', () => {
+      const willOpen = !header.classList.contains('menu-open');
+      if (!willOpen) {
+        close();
+        return;
+      }
+      header.classList.add('menu-open');
+      toggle.setAttribute('aria-expanded', 'true');
+      toggle.setAttribute('aria-label', 'Close navigation');
+      mobileNav.inert = false;
+      document.body.classList.add('nav-locked');
+      requestAnimationFrame(() => mobileNav.querySelector<HTMLAnchorElement>('a')?.focus());
+    });
+
+    mobileNav.querySelectorAll('a').forEach((link) => link.addEventListener('click', close));
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape' || !header.classList.contains('menu-open')) return;
+      close();
+      toggle.focus();
+    });
+    window.addEventListener('resize', () => { if (window.innerWidth > 980) close(); }, { passive: true });
+  };
+  setupHeader();
+</script>

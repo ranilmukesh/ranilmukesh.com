@@ -1,0 +1,47 @@
+---
+import { pageCopy } from '../data/site';
+
+const steps = [
+  { label: 'Intent', detail: 'parse' },
+  { label: 'Plan', detail: 'governance graph' },
+  { label: 'Act', detail: 'signed tool call' },
+  { label: 'Verify', detail: 'policy + schema' },
+  { label: 'Commit', detail: 'lineage' },
+];
+---
+
+<figure class="hero-panel" aria-label="How a governed agent step works">
+  <div class="panel-chrome" aria-hidden="true">
+    <div class="chrome-dots"><i></i><i></i><i></i></div>
+    <span>governed_agent.trace</span>
+    <span class="live-pill"><i></i> deterministic</span>
+  </div>
+
+  <div class="panel-body">
+    <blockquote class="panel-quote">
+      <p>“{pageCopy.quote}”</p>
+    </blockquote>
+
+    <div class="pipeline">
+      <span class="pipeline-line" aria-hidden="true"><span></span></span>
+      <ol class="pipeline-steps" aria-label="Agent step pipeline">
+      {steps.map((step, index) => (
+        <li class="pipeline-step" style={`--step: ${index}`}>
+          <span class="step-index" aria-hidden="true">0{index + 1}</span>
+          <strong>{step.label}</strong>
+          <small>{step.detail}</small>
+        </li>
+      ))}
+      </ol>
+    </div>
+
+    <div class="panel-output">
+      <p class="output-head">Every step is a governed tool call: signed, checked, and recorded.</p>
+      <ul class="panel-receipts">
+        <li><small>Provenance</small><strong>Ed25519-signed payloads</strong></li>
+        <li><small>Control</small><strong>Deterministic policy</strong></li>
+        <li><small>Audit</small><strong>Replayable lineage</strong></li>
+      </ul>
+    </div>
+  </div>
+</figure>

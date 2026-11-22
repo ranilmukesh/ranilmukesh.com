@@ -1,0 +1,11 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ContactBlock from '../components/ContactBlock.astro';
+import { profile } from '../data/site';
+---
+
+<BaseLayout title={`Contact | ${profile.name}`} description="Get in touch with Ranil Mukesh MJ about agentic architecture, Model Context Protocol (MCP), and RLAIF in enterprise systems.">
+  <div class="contact-page">
+    <ContactBlock headingLevel="h1" kicker="Contact" />
+  </div>
+</BaseLayout>

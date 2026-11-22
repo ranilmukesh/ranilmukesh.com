@@ -1,0 +1,53 @@
+---
+import Icon from './Icon.astro';
+import { profile, socialLinks, pageCopy } from '../data/site';
+
+interface Props {
+  headingLevel?: 'h1' | 'h2';
+  kicker?: string;
+}
+const { headingLevel = 'h2', kicker = '05 / Contact' } = Astro.props;
+const Heading = headingLevel;
+---
+
+<section class="contact-section shell" id="contact" aria-labelledby="contact-title" data-reveal>
+  <div class="contact-orb" aria-hidden="true"><i></i><i></i><i></i></div>
+  <div class="contact-copy">
+    <span class="section-kicker">{kicker}</span>
+    <Heading id="contact-title">Let’s build systems<br /><em>that execute.</em></Heading>
+    <p>{pageCopy.contactBody}</p>
+    <div class="contact-actions">
+      <a class="button button-light" href={`mailto:${profile.email}`}>Email me <Icon name="arrow-up-right" size={17} /></a>
+      <button class="copy-email" type="button" data-copy-email={profile.email}><span data-copy-label aria-live="polite">{profile.email}</span><small>copy</small></button>
+    </div>
+  </div>
+  <div class="contact-socials">
+    {socialLinks.map((link) => (
+      <a href={link.href} target="_blank" rel="noopener noreferrer" aria-label={`${link.label}: ${link.handle}`} title={link.label}>
+        <Icon name={link.icon} size={19} />
+      </a>
+    ))}
+  </div>
+</section>
+
+<script>
+  const setupCopyEmail = () => {
+    document.querySelectorAll<HTMLButtonElement>('[data-copy-email]:not([data-ready])').forEach((button) => {
+      button.dataset.ready = 'true';
+      button.addEventListener('click', async () => {
+        const email = button.dataset.copyEmail;
+        const label = button.querySelector<HTMLElement>('[data-copy-label]');
+        if (!email || !label) return;
+        try {
+          await navigator.clipboard.writeText(email);
+          const previous = label.textContent;
+          label.textContent = 'Copied to clipboard';
+          window.setTimeout(() => { label.textContent = previous; }, 1800);
+        } catch {
+          window.location.href = `mailto:${email}`;
+        }
+      });
+    });
+  };
+  setupCopyEmail();
+</script>

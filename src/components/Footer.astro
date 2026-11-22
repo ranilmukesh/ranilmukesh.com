@@ -1,0 +1,52 @@
+---
+import Icon from './Icon.astro';
+import { profile, socialLinks, companyLinks } from '../data/site';
+import { palettes, modes } from '../data/themes';
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="shell footer-main">
+    <div class="footer-intro">
+      <a class="footer-brand" href="/">Ranil <em>Mukesh</em></a>
+      <p>Deterministic agents.<br />Systems with receipts.</p>
+
+      <div class="appearance" role="group" aria-label="Appearance">
+        <span class="footer-label">Appearance</span>
+        <div class="appearance-row">
+          <div class="segmented" role="group" aria-label="Colour theme">
+            {palettes.map((palette) => (
+              <button type="button" data-set-palette={palette.id} aria-pressed="false" title={palette.description}>
+                <span class={`mini-swatch swatch-${palette.id}`} aria-hidden="true"></span>{palette.label}
+              </button>
+            ))}
+          </div>
+          <div class="segmented" role="group" aria-label="Mode">
+            {modes.map((mode) => (
+              <button type="button" data-set-mode={mode} aria-pressed="false">
+                <Icon name={mode === 'dark' ? 'moon' : 'sun'} size={14} />{mode === 'dark' ? 'Dark' : 'Light'}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-links">
+      <span class="footer-label">Find me online</span>
+      <a href={`mailto:${profile.email}`}>Email <Icon name="arrow-up-right" size={15} /></a>
+      {socialLinks.map((link) => (
+        <a href={link.href} target="_blank" rel="noopener noreferrer">
+          {link.label}
+          <Icon name="arrow-up-right" size={15} />
+        </a>
+      ))}
+      <a href={companyLinks.phobosq} target="_blank" rel="noopener noreferrer">PhobosQ <Icon name="arrow-up-right" size={15} /></a>
+      <a href={companyLinks.k22} target="_blank" rel="noopener noreferrer">k22.ai <Icon name="arrow-up-right" size={15} /></a>
+    </div>
+  </div>
+  <div class="shell footer-bottom">
+    <span>© {year} {profile.name}</span>
+    <span class="footer-nav"><a href="/blog/">Articles</a><a href="/research/">Research</a><a href="/#contact">Contact</a></span>
+    <a href="#top">Back to top ↑</a>
+  </div>
+</footer>

@@ -1,0 +1,21 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import ExpertiseGrid from '../components/ExpertiseGrid.astro';
+import { profile, pageCopy } from '../data/site';
+---
+
+<BaseLayout
+  title={`Technical expertise | ${profile.name}`}
+  description="Technical expertise of Ranil Mukesh MJ: agentic systems and orchestration, foundation models and training, data and infrastructure, and computer vision at the edge."
+>
+  <section class="page-hero shell" aria-labelledby="page-title">
+    <span class="section-kicker">Technical expertise</span>
+    <h1 id="page-title">Depth across<br /><em>the whole stack.</em></h1>
+    <p>{pageCopy.expertiseIntro}</p>
+  </section>
+  <section class="shell listing" aria-label="Expertise domains">
+    <ExpertiseGrid />
+    <p class="page-back"><a class="text-link" href="/#work">See the systems this expertise built <Icon name="arrow-right" size={15} /></a></p>
+  </section>
+</BaseLayout>

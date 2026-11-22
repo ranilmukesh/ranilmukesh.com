@@ -1,0 +1,250 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import HeroPanel from '../components/HeroPanel.astro';
+import ExpertiseGrid from '../components/ExpertiseGrid.astro';
+import ContactBlock from '../components/ContactBlock.astro';
+import {
+  profile,
+  companyLinks,
+  pageCopy,
+  proofPoints,
+  flagshipSystems,
+  moreBuilds,
+  openSource,
+  experience,
+  paperHref,
+} from '../data/site';
+import { formatDate } from '../utils/format';
+
+const posts = (await getCollection('blog')).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const papers = (await getCollection('research'))
+  .sort((a, b) => (b.data.date?.valueOf() ?? 0) - (a.data.date?.valueOf() ?? 0))
+  .slice(0, 4);
+const paperCount = (await getCollection('research')).length;
+---
+
+<BaseLayout>
+  <section class="hero shell" aria-labelledby="hero-title">
+    <div class="hero-copy">
+      <div class="eyebrow-row">
+        <span class="eyebrow"><i></i> {profile.name}</span>
+        <span class="hero-location">
+          {profile.role} · <a href={companyLinks.phobosq} target="_blank" rel="noopener noreferrer">PhobosQ</a> &amp; <a href={companyLinks.k22} target="_blank" rel="noopener noreferrer">k22.ai</a>
+        </span>
+      </div>
+
+      <h1 id="hero-title">
+        Infrastructure for <span>autonomous</span> <em>enterprise intelligence.</em>
+      </h1>
+
+      <div class="hero-bottom">
+        <p>{pageCopy.heroSummary}</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="#work">See the systems <Icon name="arrow-right" size={17} /></a>
+          <a class="button button-ghost" href="/blog/">Read the articles <Icon name="arrow-right" size={17} /></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-panel-wrap">
+      <div class="hero-stamp" aria-hidden="true">
+        <svg viewBox="0 0 100 100">
+          <defs><path id="stamp-path" d="M50,50 m-35,0 a35,35 0 1,1 70,0 a35,35 0 1,1 -70,0" /></defs>
+          <text><textPath href="#stamp-path">DETERMINISTIC · STATEFUL · AGENTIC · </textPath></text>
+        </svg>
+        <span>{profile.initials}</span>
+      </div>
+      <HeroPanel />
+    </div>
+  </section>
+
+  <section class="proof-strip shell" aria-label="At a glance">
+    {proofPoints.map((proof) => (
+      <div class="proof-item">
+        <strong>{proof.value}</strong>
+        <span>{proof.label}</span>
+      </div>
+    ))}
+  </section>
+
+  <section class="section work-section shell" id="work" aria-labelledby="work-title">
+    <div class="section-intro" data-reveal>
+      <div>
+        <span class="section-kicker">01 / Selected systems</span>
+        <h2 id="work-title">Systems with<br /><em>receipts.</em></h2>
+      </div>
+      <p>{pageCopy.workIntro}</p>
+    </div>
+
+    <div class="system-list">
+      {flagshipSystems.map((system) => (
+        <article class={`system-card accent-${system.accent}`} id={system.slug} aria-labelledby={`${system.slug}-title`} data-reveal>
+          <div class="system-copy">
+            <div class="work-meta">
+              <span>{system.index}</span>
+              <span>{system.label}</span>
+            </div>
+            <p class="system-name">{system.name}</p>
+            <h3 id={`${system.slug}-title`}>{system.title}</h3>
+            <p class="system-summary">{system.summary}</p>
+            <div class="work-tags" aria-label="Stack">
+              {system.stack.map((item) => <span>{item}</span>)}
+            </div>
+            {system.links && system.links.length > 0 && (
+              <div class="system-links">
+                {system.links.map((link) => (
+                  <a class="work-link" href={link.href} target="_blank" rel="noopener noreferrer">
+                    {link.label} <span class="sr-only">for {system.name}</span><Icon name="arrow-up-right" size={16} />
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <dl class="receipts">
+            <div class="receipt">
+              <dt>Problem</dt>
+              <dd><p>{system.problem}</p></dd>
+            </div>
+            <div class="receipt">
+              <dt>Architecture</dt>
+              <dd><ul>{system.architecture.map((line) => <li>{line}</li>)}</ul></dd>
+            </div>
+            <div class="receipt">
+              <dt>Key decisions</dt>
+              <dd><ul>{system.decisions.map((line) => <li>{line}</li>)}</ul></dd>
+            </div>
+            <div class="receipt receipt-outcome">
+              <dt>Outcome</dt>
+              <dd><p>{system.outcome}</p></dd>
+            </div>
+          </dl>
+        </article>
+      ))}
+    </div>
+
+    <div class="builds" aria-labelledby="builds-title">
+      <div class="builds-head" data-reveal>
+        <h3 id="builds-title">More <em>builds</em></h3>
+        <p>Products, open-source systems, and experiments behind the flagship work.</p>
+      </div>
+      <div class="build-grid">
+        {moreBuilds.map((build) =>
+          build.href ? (
+            <a class="build-card" href={build.href} target="_blank" rel="noopener noreferrer" data-reveal>
+              <span class="build-name">{build.name} <Icon name="arrow-up-right" size={16} /></span>
+              <p>{build.description}</p>
+              <span class="build-tags">{build.tags.join(' · ')}</span>
+            </a>
+          ) : (
+            <div class="build-card" data-reveal>
+              <span class="build-name">{build.name}</span>
+              <p>{build.description}</p>
+              <span class="build-tags">{build.tags.join(' · ')}</span>
+            </div>
+          )
+        )}
+      </div>
+
+      <div class="open-source" data-reveal>
+        <span class="section-kicker">Open source</span>
+        <ul>
+          {openSource.map((item) => (
+            <li><strong>{item.name}</strong><span>{item.description}</span></li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section expertise-section shell" id="expertise" aria-labelledby="expertise-title">
+    <div class="section-intro compact" data-reveal>
+      <div>
+        <span class="section-kicker">02 / Technical expertise</span>
+        <h2 id="expertise-title">Depth across<br /><em>the whole stack.</em></h2>
+      </div>
+      <p>{pageCopy.expertiseIntro}</p>
+    </div>
+    <ExpertiseGrid />
+  </section>
+
+  <section class="section journey-section" id="journey" aria-labelledby="journey-title">
+    <div class="shell journey-grid">
+      <div class="journey-heading" data-reveal>
+        <span class="section-kicker">03 / Professional journey</span>
+        <h2 id="journey-title">Two companies,<br /><em>one thesis.</em></h2>
+        <p>{pageCopy.journeyIntro}</p>
+        <p class="journey-philosophy">{pageCopy.philosophy}</p>
+        <blockquote class="journey-quote"><p>“{pageCopy.quote}”</p></blockquote>
+      </div>
+
+      <div class="timeline">
+        {experience.map((item, index) => (
+          <article class="timeline-item" data-reveal>
+            <div class="timeline-marker" aria-hidden="true">
+              <strong>{item.marker}</strong>
+              <span>0{index + 1}</span>
+            </div>
+            <div class="timeline-copy">
+              <div class="timeline-company">
+                <h3><a href={item.href} target="_blank" rel="noopener noreferrer">{item.company} <Icon name="arrow-up-right" size={18} /></a></h3>
+              </div>
+              <div class="timeline-role"><strong>{item.role}</strong></div>
+              <p>{item.summary}</p>
+              <div class="tool-cloud">{item.focus.map((focus) => <span>{focus}</span>)}</div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section writing-section shell" id="writing" aria-labelledby="writing-title">
+    <div class="section-intro writing-intro" data-reveal>
+      <div>
+        <span class="section-kicker">04 / Writing and research</span>
+        <h2 id="writing-title">Notes, papers,<br /><em>and pre-prints.</em></h2>
+      </div>
+      <p>{pageCopy.writingIntro}</p>
+    </div>
+
+    <div class="writing-grid">
+      <div class="writing-column" data-reveal>
+        <div class="column-head">
+          <h3>Articles</h3>
+          <a class="text-link" href="/blog/">All articles <Icon name="arrow-right" size={15} /></a>
+        </div>
+        <ol class="post-list">
+          {posts.map((post) => (
+            <li>
+              <a class="post-row" href={`/blog/${post.id}/`}>
+                <time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time>
+                <span class="post-title">{post.data.title}</span>
+                <Icon name="arrow-up-right" size={17} />
+              </a>
+            </li>
+          ))}
+        </ol>
+      </div>
+
+      <div class="writing-column research-column" data-reveal>
+        <div class="column-head">
+          <h3>Research</h3>
+          <a class="text-link" href="/research/">All {paperCount} papers <Icon name="arrow-right" size={15} /></a>
+        </div>
+        <ul class="paper-list">
+          {papers.map((paper) => (
+            <li>
+              <span class="paper-meta">{paper.data.venue ?? (paper.data.date ? formatDate(paper.data.date, 'month') : 'Pre-print')}</span>
+              <a href={paperHref(paper.data.pdfUrl)} target="_blank" rel="noopener noreferrer">{paper.data.title}</a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <ContactBlock />
+</BaseLayout>

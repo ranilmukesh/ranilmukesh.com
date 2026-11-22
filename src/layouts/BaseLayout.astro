@@ -1,0 +1,192 @@
+---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import '@fontsource-variable/instrument-sans/wght.css';
+import '@fontsource-variable/newsreader/wght.css';
+import '@fontsource-variable/newsreader/wght-italic.css';
+import '../styles/global.css';
+import { profile, socialLinks, companyLinks, pageCopy } from '../data/site';
+import { themeConfig, palettes, DEFAULT_PALETTE, DEFAULT_MODE } from '../data/themes';
+import { serializeJsonLd } from '../utils/serialize-json-ld.mjs';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  imageAlt?: string;
+  type?: 'website' | 'article';
+  noindex?: boolean;
+  schema?: Record<string, unknown> | Record<string, unknown>[];
+}
+
+const {
+  title = pageCopy.seoTitle,
+  description = pageCopy.seoDescription,
+  image = '/og-cover.png',
+  imageAlt = `${profile.name}, ${profile.role} at ${profile.companies}`,
+  type = 'website',
+  noindex = false,
+  schema,
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const imageUrl = new URL(image, Astro.site);
+const siteUrl = new URL('/', Astro.site).toString();
+const personId = new URL('/#person', Astro.site).toString();
+const defaultThemeColor = palettes.find((p) => p.id === DEFAULT_PALETTE)!.themeColor[DEFAULT_MODE];
+
+const personSchema = {
+  '@type': 'Person',
+  '@id': personId,
+  name: profile.name,
+  jobTitle: `${profile.role}, ${profile.companies}`,
+  description: profile.bio,
+  url: siteUrl,
+  email: `mailto:${profile.email}`,
+  sameAs: socialLinks.map((item) => item.href),
+  worksFor: [
+    { '@type': 'Organization', name: 'PhobosQ', url: companyLinks.phobosq },
+    { '@type': 'Organization', name: 'k22.ai', url: companyLinks.k22 },
+  ],
+  knowsAbout: ['Agentic AI', 'Multi-agent systems', 'Model Context Protocol', 'Foundation models', 'RLAIF', 'MLOps', 'Computer vision'],
+};
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  '@id': new URL('/#website', Astro.site).toString(),
+  name: profile.name,
+  url: siteUrl,
+  description: pageCopy.seoDescription,
+  inLanguage: 'en',
+  author: { '@id': personId },
+};
+const profilePageSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfilePage',
+  '@id': new URL('/#profile-page', Astro.site).toString(),
+  name: title,
+  description,
+  url: siteUrl,
+  mainEntity: personSchema,
+};
+const pageSchema = schema ? (Array.isArray(schema) ? schema : [schema]) : [];
+const jsonLd = noindex
+  ? []
+  : [
+      websiteSchema,
+      Astro.url.pathname === '/'
+        ? profilePageSchema
+        : { '@context': 'https://schema.org', ...personSchema },
+      ...pageSchema,
+    ];
+---
+
+<!doctype html>
+<html lang="en" data-palette={DEFAULT_PALETTE} data-theme={DEFAULT_MODE}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content={defaultThemeColor} />
+    <meta name="color-scheme" content="light dark" />
+    <!-- Applies the stored palette and mode before first paint (no flash of the wrong theme). -->
+    <script is:inline define:vars={{ cfg: themeConfig }}>
+      var root = document.documentElement;
+      root.classList.add('has-js');
+      var palette = cfg.defaults.palette;
+      var mode = cfg.defaults.mode;
+      try {
+        var storedPalette = localStorage.getItem(cfg.keys.palette);
+        if (cfg.palettes.indexOf(storedPalette) > -1) palette = storedPalette;
+        var storedMode = localStorage.getItem(cfg.keys.mode);
+        if (cfg.modes.indexOf(storedMode) > -1) {
+          mode = storedMode;
+        } else {
+          var legacyMode = localStorage.getItem(cfg.keys.legacyMode);
+          if (legacyMode === 'light' || legacyMode === 'dark') mode = legacyMode;
+        }
+      } catch (e) {}
+      root.setAttribute('data-palette', palette);
+      root.setAttribute('data-theme', mode);
+      var themeMeta = document.querySelector('meta[name="theme-color"]');
+      if (themeMeta && cfg.themeColors[palette]) themeMeta.setAttribute('content', cfg.themeColors[palette][mode]);
+    </script>
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content={profile.name} />
+    <link rel="canonical" href={canonical} />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt" />
+    <meta name="robots" content={noindex ? 'noindex,nofollow' : 'index,follow,max-image-preview:large'} />
+
+    <meta property="og:type" content={type} />
+    <meta property="og:site_name" content={profile.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={imageUrl} />
+    <meta property="og:image:secure_url" content={imageUrl} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={imageAlt} />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@ranilmukesh" />
+    <meta name="twitter:creator" content="@ranilmukesh" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={imageUrl} />
+    <meta name="twitter:image:alt" content={imageAlt} />
+    <slot name="head" />
+
+    {jsonLd.map((entry) => <script is:inline type="application/ld+json" set:html={serializeJsonLd(entry)} />)}
+  </head>
+  <body id="top">
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <div class="page-noise" aria-hidden="true"></div>
+    <Header />
+    <main id="main-content" tabindex="-1">
+      <slot />
+    </main>
+    <Footer />
+    <div class="cursor-glow" aria-hidden="true" data-cursor-glow></div>
+
+    <script>
+      import { setupThemeControls } from '../scripts/theme';
+
+      const setupGlobalEffects = () => {
+        setupThemeControls();
+
+        const glow = document.querySelector<HTMLElement>('[data-cursor-glow]');
+        if (glow && !glow.dataset.ready && matchMedia('(pointer: fine)').matches && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          glow.dataset.ready = 'true';
+          window.addEventListener('pointermove', (event) => {
+            glow.style.setProperty('--pointer-x', `${event.clientX}px`);
+            glow.style.setProperty('--pointer-y', `${event.clientY}px`);
+          }, { passive: true });
+        }
+
+        const reveals = document.querySelectorAll<HTMLElement>('[data-reveal]:not([data-reveal-ready])');
+        if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+              if (!entry.isIntersecting) return;
+              (entry.target as HTMLElement).classList.add('is-visible');
+              observer.unobserve(entry.target);
+            });
+          }, { threshold: 0.12, rootMargin: '0px 0px -40px' });
+          reveals.forEach((item) => {
+            item.dataset.revealReady = 'true';
+            observer.observe(item);
+          });
+        } else {
+          reveals.forEach((item) => item.classList.add('is-visible'));
+        }
+      };
+      setupGlobalEffects();
+    </script>
+  </body>
+</html>

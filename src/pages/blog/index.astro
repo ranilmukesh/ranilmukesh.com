@@ -1,0 +1,37 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Icon from '../../components/Icon.astro';
+import { profile } from '../../data/site';
+import { formatDate } from '../../utils/format';
+
+const posts = (await getCollection('blog')).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const title = `Articles | ${profile.name}`;
+const description = 'Articles by Ranil Mukesh MJ on agentic systems, AI architecture, inference, and the future of work.';
+---
+
+<BaseLayout title={title} description={description}>
+  <section class="page-hero shell" aria-labelledby="page-title">
+    <span class="section-kicker">Articles</span>
+    <h1 id="page-title">Notes from<br /><em>the build.</em></h1>
+    <p>Thoughts on agentic systems, AI architecture, and the future of work.</p>
+  </section>
+
+  <section class="shell listing" aria-label="All articles">
+    <ol class="article-list">
+      {posts.map((post, index) => (
+        <li data-reveal>
+          <a class="article-row" href={`/blog/${post.id}/`}>
+            <span class="article-index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+            <span class="article-body">
+              <time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time>
+              <strong>{post.data.title}</strong>
+              <span>{post.data.description}</span>
+            </span>
+            <span class="article-arrow" aria-hidden="true"><Icon name="arrow-up-right" size={20} /></span>
+          </a>
+        </li>
+      ))}
+    </ol>
+  </section>
+</BaseLayout>
